@@ -1,0 +1,80 @@
+include:
+  - path: ../common/project_base.yml
+name: HelloWorld
+targetTemplates:
+  CommonTemplate:
+    platform: iOS
+    deploymentTarget:
+      iOS: 13.0
+    sources:
+      - path: ${targetName}/Sources
+        name: Sources
+      - path: ${targetName}/Resources
+        name: Resources
+    info:
+      path: ${targetName}/Resources/Info.plist
+      properties:
+        CFBundlePackageType: $(PRODUCT_BUNDLE_PACKAGE_TYPE) #APPL
+    postCompileScripts:
+      - script: |
+                if which swiftlint >/dev/null; then
+                  swiftlint lint --strict --config ../common/swiftlint.yml --path .
+                else
+                  echo "warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint"
+                fi
+        name: Run SwiftLint Common
+  FrameworkTemplate:
+    postCompileScripts:
+      - script: |
+                if which swiftlint >/dev/null; then
+                  swiftlint lint --strict --config ../common/swiftlint_framework.yml --path .
+                else
+                  echo "warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint"
+                fi
+        name: Run SwiftLint Framework
+targets:
+  HelloWorld:
+    type: application
+    templates:
+      - CommonTemplate
+    templateAttributes:
+      targetName: HelloWorld
+    dependencies:
+      - target: HelloModel
+    scheme:
+      gatherCoverageData: true
+      testTargets:
+        - HelloWorldTests
+        - HelloWorldUITests
+  HelloWorldTests:
+    type: bundle.unit-test
+    templates:
+      - CommonTemplate
+    templateAttributes:
+      targetName: HelloWorldTests
+  HelloWorldUITests:
+    type: bundle.ui-testing
+    templates:
+      - CommonTemplate
+    templateAttributes:
+      targetName: HelloWorldUITests
+    settings:
+      base:
+        TEST_TARGET_NAME: HelloWorld
+  HelloModel:
+    type: framework
+    templates:
+      - FrameworkTemplate
+      - CommonTemplate
+    templateAttributes:
+      targetName: HelloModel
+    scheme:
+      gatherCoverageData: true
+      testTargets:
+        - HelloModelTests
+  HelloModelTests:
+    type: bundle.unit-test
+    templates:
+      - CommonTemplate
+    templateAttributes:
+      targetName: HelloModelTests

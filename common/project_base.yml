@@ -1,0 +1,3 @@
+options:
+  bundleIdPrefix: com.dustinpfannenstiel
+  createIntermediateGroups: true

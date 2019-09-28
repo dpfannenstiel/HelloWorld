@@ -1,0 +1,4 @@
+# Use this for linting framework targets.
+opt_in_rules:
+  - explicit_top_level_acl
+  - explicit_acl
