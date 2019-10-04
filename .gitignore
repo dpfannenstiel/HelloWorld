@@ -95,3 +95,6 @@ iOSInjectionProject/
 # Ignore Gradle build output directory
 build
 
+# Ignore IntelliJ Files
+.idea/
+*.iml

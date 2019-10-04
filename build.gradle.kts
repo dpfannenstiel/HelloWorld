@@ -4,3 +4,59 @@
  * This is a general purpose Gradle build.
  * Learn how to create Gradle builds at https://guides.gradle.org/creating-new-gradle-builds
  */
+
+open class Bundle: Exec() {
+
+    private fun run(vararg arguments:String) {
+        executable("bundle")
+        args(*arguments)
+    }
+
+    fun exec(vararg arguments:String) {
+        run("exec", *arguments)
+    }
+
+    open fun install() {
+        run("install")
+    }
+
+    open fun update() {
+        run("update")
+    }
+
+}
+
+open class CocoaPods: Bundle() {
+
+    override fun install() {
+        exec("pod", "install")
+    }
+
+    override fun update() {
+        exec("pod", "repo", "update")
+    }
+}
+
+tasks.register<Bundle>("bundleInstall") {
+    description = "Install the Gemfile"
+    group = "Project"
+    install()
+}
+
+tasks.register<Bundle>("bundleUpdate") {
+    description = "Update the Gemfile installation"
+    group = "Project"
+    update()
+}
+
+tasks.register<CocoaPods>("podInstall") {
+    description = "Install Pods from the Podfile"
+    group = "Project"
+    install()
+}
+
+tasks.register<CocoaPods>("podRepoUpdate") {
+    description = "Update the CocoaPods Repo"
+    group = "Project"
+    update()
+}
